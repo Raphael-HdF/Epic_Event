@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import json
 import os
 from datetime import timedelta
 from pathlib import Path
@@ -23,13 +24,14 @@ load_dotenv(dotenv_path=BASE_DIR / '.env')
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-51r&h5!=o64z)4%--t0b^qdz=l@7rg!qeku3jf)02!-2jxu$h)'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+ALLOWED_HOSTS = json.loads(os.getenv('ALLOWED_HOSTS'))
+DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = []
 
+CSRF_TRUSTED_ORIGINS = json.loads(os.getenv('CSRF_HOSTS'))
 
 # Application definition
 
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'user',
+    'event_management',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +84,7 @@ WSGI_APPLICATION = 'Epic_Event.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': os.getenv('DBENGINE'),
         'NAME': os.getenv('DBNAME'),
         'USER': os.getenv('DBUSER'),
         'PASSWORD': os.getenv('DBPASSWORD'),
