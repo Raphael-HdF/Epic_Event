@@ -1,8 +1,19 @@
 from django.contrib import admin
+from django import forms
 
 from .models import Customer, Contract, Event
 
 
+class ContractForm(forms.ModelForm):
+    contracts = forms.ModelChoiceField(queryset=Contract.objects.all())  # your filter
+    class Meta:
+        model = Contract
+
+        fields = ('name', )
+
+class ContractInline(admin.TabularInline):
+    model = Contract
+    form = ContractForm
 @admin.register(Customer)
 class CustomerAdminConfig(admin.ModelAdmin):
     model = Customer
@@ -10,7 +21,33 @@ class CustomerAdminConfig(admin.ModelAdmin):
     # list_filter = ('user',)
     ordering = ('-time_created',)
     list_display = ('id', 'name', 'email', 'phone_number', 'prospect')
-
+    inlines = (ContractInline,)
+    fieldsets = (
+        ('Informations', {'fields': (
+            'prospect',
+            'name',
+            'phone_number',
+            'email',
+            'address',
+        )}),
+        # ('Contracts', {'fields': ('contracts',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'prospect',
+                'name',
+                'phone_number',
+                'email',
+                'address',
+            )
+        }
+         ),
+    )
+    # filter_horizontal = (
+    #     "contracts",
+    # )
 
 @admin.register(Contract)
 class ContractAdminConfig(admin.ModelAdmin):
@@ -25,8 +62,7 @@ class ContractAdminConfig(admin.ModelAdmin):
 class EventAdminConfig(admin.ModelAdmin):
     model = Event
     search_fields = ('name', 'event_date', 'state',)
-    list_filter = ('state', )
+    list_filter = ('state',)
     ordering = ('-event_date',)
     list_display = ('name', 'event_date', 'state', 'support_employee',
                     'event_employee',)
-

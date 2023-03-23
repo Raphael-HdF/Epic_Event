@@ -14,6 +14,7 @@ class UserAdminConfig(UserAdmin):
         ('Login', {'fields': ('email', 'username', 'password',)}),
         ('Personal', {'fields': ('first_name', 'last_name', )}),
         ('Permissions', {'fields': ('is_staff', 'is_superuser', 'is_active')}),
+        ('Groups', {'fields': ('groups', )}),
     )
     add_fieldsets = (
         (None, {
@@ -21,7 +22,7 @@ class UserAdminConfig(UserAdmin):
             'fields': (
                 'email', 'username', 'password1', 'password2',
                 'first_name', 'last_name', 'is_active',
-                'is_staff')
+                'is_staff', 'groups')
         }
          ),
     )
