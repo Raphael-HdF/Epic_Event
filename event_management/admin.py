@@ -2,33 +2,41 @@ from django.contrib import admin
 from django import forms
 
 from .models import Customer, Contract, Event
+from .permissions import DjangoAdminPermission
 
 
 class ContractForm(forms.ModelForm):
     contracts = forms.ModelChoiceField(queryset=Contract.objects.all())  # your filter
+
     class Meta:
         model = Contract
+        fields = ('name',)
 
-        fields = ('name', )
 
 class ContractInline(admin.TabularInline):
     model = Contract
     form = ContractForm
+
+
 @admin.register(Customer)
-class CustomerAdminConfig(admin.ModelAdmin):
+class CustomerAdminConfig(DjangoAdminPermission):
     model = Customer
     search_fields = ('name', 'email', 'prospect')
-    # list_filter = ('user',)
+    list_filter = ('sale_employee',)
     ordering = ('-time_created',)
-    list_display = ('id', 'name', 'email', 'phone_number', 'prospect')
+    list_display = ('name', 'email', 'phone_number', 'prospect', 'sale_employee', 'id', )
     inlines = (ContractInline,)
     fieldsets = (
         ('Informations', {'fields': (
             'prospect',
             'name',
+            'first_name',
+            'company',
             'phone_number',
+            'mobile_phone_number',
             'email',
             'address',
+            'sale_employee',
         )}),
         # ('Contracts', {'fields': ('contracts',)}),
     )
@@ -45,12 +53,10 @@ class CustomerAdminConfig(admin.ModelAdmin):
         }
          ),
     )
-    # filter_horizontal = (
-    #     "contracts",
-    # )
+
 
 @admin.register(Contract)
-class ContractAdminConfig(admin.ModelAdmin):
+class ContractAdminConfig(DjangoAdminPermission):
     model = Contract
     search_fields = ('name', 'customer', 'state')
     list_filter = ('state', 'customer', 'sale_employee',)
@@ -59,7 +65,7 @@ class ContractAdminConfig(admin.ModelAdmin):
 
 
 @admin.register(Event)
-class EventAdminConfig(admin.ModelAdmin):
+class EventAdminConfig(DjangoAdminPermission):
     model = Event
     search_fields = ('name', 'event_date', 'state',)
     list_filter = ('state', 'customer', 'support_employee',)
