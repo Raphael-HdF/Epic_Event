@@ -1,4 +1,5 @@
-from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
@@ -13,10 +14,11 @@ class CustomerViewSet(ModelViewSet):
         IsAuthenticated,
         HasGroupPermission
     ]
-
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filterset_fields = '__all__'
+    search_fields = ['name', 'first_name', 'company', 'email']
     def get_queryset(self):
         return Customer.objects.all()
-        # return Customer.objects.filter(event=self.kwargs['event_pk'])
 
 
 class ContractViewSet(ModelViewSet):
@@ -25,22 +27,13 @@ class ContractViewSet(ModelViewSet):
         IsAuthenticated,
         HasGroupPermission
     ]
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filterset_fields = '__all__'
+    search_fields = ['customer__name', 'signature_date', 'amount', 'customer__email']
 
     def get_queryset(self):
-        contract = Contract.objects.all()
-        if self.kwargs.get('customer_pk'):
-            contract = Contract.objects.filter(
-                event=self.kwargs['customer_pk']
-            )
-        if self.kwargs.get('pk'):
-            contract = contract.filter(
-                user=self.kwargs['pk'],
-            )
-        return contract
+        return Contract.objects.all()
 
-    def get_object(self):
-        queryset = self.filter_queryset(self.get_queryset())
-        return get_object_or_404(queryset)
 
 
 class EventViewSet(ModelViewSet):
@@ -49,9 +42,9 @@ class EventViewSet(ModelViewSet):
         IsAuthenticated,
         HasGroupPermission
     ]
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filterset_fields = '__all__'
+    search_fields = ['customer__name', 'event_date', 'customer__email']
 
     def get_queryset(self):
-        # if self.request.user.is_superuser:
-        #     return Event.objects.all()
-        # return Event.objects.filter(contracts__user=self.request.user).distinct()
         return Event.objects.all()

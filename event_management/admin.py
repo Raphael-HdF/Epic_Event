@@ -53,16 +53,15 @@ class CustomerAdminConfig(admin.ModelAdmin):
 class ContractAdminConfig(admin.ModelAdmin):
     model = Contract
     search_fields = ('name', 'customer', 'state')
-    list_filter = ('customer',)
+    list_filter = ('state', 'customer', 'sale_employee',)
     ordering = ('-time_created', 'state',)
-    list_display = ('name', 'customer', 'state', 'signature_date',)
+    list_display = ('name', 'customer', 'state', 'signature_date', 'sale_employee',)
 
 
 @admin.register(Event)
 class EventAdminConfig(admin.ModelAdmin):
     model = Event
     search_fields = ('name', 'event_date', 'state',)
-    list_filter = ('state',)
+    list_filter = ('state', 'customer', 'support_employee',)
     ordering = ('-event_date',)
-    list_display = ('name', 'event_date', 'state', 'support_employee',
-                    'event_employee',)
+    list_display = ('name', 'customer', 'event_date', 'state', 'support_employee',)

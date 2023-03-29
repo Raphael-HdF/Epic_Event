@@ -7,14 +7,16 @@ from .models import User
 class UserAdminConfig(UserAdmin):
     model = User
     search_fields = ('email', 'first_name',)
-    list_filter = ('email', 'username', 'is_active', 'is_staff', 'is_superuser')
+    list_filter = ('groups', 'is_active', 'is_staff',
+                   'is_superuser', 'email', 'username',
+                   )
     ordering = ('-date_joined',)
     list_display = ('email', 'username', 'first_name', 'is_active', 'is_staff', 'id',)
     fieldsets = (
         ('Login', {'fields': ('email', 'username', 'password',)}),
-        ('Personal', {'fields': ('first_name', 'last_name', )}),
+        ('Personal', {'fields': ('first_name', 'last_name',)}),
         ('Permissions', {'fields': ('is_staff', 'is_superuser', 'is_active')}),
-        ('Groups', {'fields': ('groups', )}),
+        ('Groups', {'fields': ('groups',)}),
     )
     add_fieldsets = (
         (None, {
